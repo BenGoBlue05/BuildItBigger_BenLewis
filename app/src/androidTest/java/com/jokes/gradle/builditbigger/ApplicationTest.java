@@ -1,4 +1,4 @@
-package com.benlewis.android.builditbigger;
+package com.jokes.gradle.builditbigger;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
