@@ -1,11 +1,9 @@
 package com.jokes.gradle.builditbigger;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.util.Log;
 
-import com.example.android.androidlibrary.JokeActivity;
 import com.example.bplewis5.myapplication.backend.myApi.MyApi;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
@@ -17,15 +15,20 @@ import java.io.IOException;
 /**
  * Created by bplewis5 on 9/6/16.
  */
-class EndpointsAsyncTask extends AsyncTask<Context, Void, String> {
+class EndpointsAsyncTask extends AsyncTask<EndpointsAsyncTask.JokeListener, Void, String> {
 
     private final String LOG_TAG = EndpointsAsyncTask.class.getSimpleName();
-
+    private JokeListener mJokeListener;
     private static MyApi myApiService = null;
-    private Context mContext;
+
+
+    public interface JokeListener{
+        void onJokeReceived(String joke);
+    }
+
 
     @Override
-    protected String doInBackground(Context... contexts) {
+    protected String doInBackground(JokeListener... jokeListeners) {
         if(myApiService == null) {  // Only do this once
             MyApi.Builder builder = new MyApi.Builder(AndroidHttp.newCompatibleTransport(),
                     new AndroidJsonFactory(), null)
@@ -40,11 +43,10 @@ class EndpointsAsyncTask extends AsyncTask<Context, Void, String> {
                         }
                     });
             // end options for devappserver
-
+            mJokeListener = jokeListeners[0];
             myApiService = builder.build();
         }
 
-        mContext = contexts[0];
 
         try {
             return myApiService.displayJoke().execute().getData();
@@ -56,9 +58,8 @@ class EndpointsAsyncTask extends AsyncTask<Context, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         Log.i(LOG_TAG, "JOKE RESULT: " + result);
-        Intent intent = new Intent(mContext, JokeActivity.class)
-                .putExtra(Intent.EXTRA_TEXT, result)
-                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        mContext.startActivity(intent);
+        if (!TextUtils.isEmpty(result)){
+            mJokeListener.onJokeReceived(result);
+        }
     }
 }

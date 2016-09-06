@@ -1,13 +1,16 @@
 package com.jokes.gradle.builditbigger;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.android.androidlibrary.JokeActivity;
 
-public class MainActivity extends ActionBarActivity {
+
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +42,14 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void tellJoke(View view) {
-        new EndpointsAsyncTask().execute(getApplicationContext());
+        new EndpointsAsyncTask().execute(new EndpointsAsyncTask.JokeListener() {
+            @Override
+            public void onJokeReceived(String joke) {
+                Intent intent = new Intent(getApplicationContext(), JokeActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT, joke);
+                startActivity(intent);
+            }
+        });
     }
-
 
 }
