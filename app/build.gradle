@@ -11,6 +11,7 @@ android {
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -28,4 +29,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.2.0'
     compile 'com.google.android.gms:play-services-ads:9.4.0'
     compile project(path: ':backend', configuration: 'android-endpoints')
+    compile 'com.android.support:multidex:1.0.1'
+    testCompile 'junit:junit:4.12'
+
 }
